@@ -1,0 +1,8 @@
+.calendar-block #calendar.loading-indicator {
+	background-color: rgba(0, 0, 0, 0.3);
+	opacity:          0.3;
+}
+
+.calendar-block .add-modal {
+	display: none;
+}
