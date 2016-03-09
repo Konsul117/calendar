@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+
+	# -- Для папки assets, если файла нет, то не стартуем движок, а сразу отдаём 404
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_URI} ^/assets/
+	RewriteRule . - [L,QSA]
+	# -- -- -- --
+
+	# -- Перенаправляем на основную точку входа
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule (.*) index.php [L,QSA]
+	# -- -- -- --
+</IfModule>

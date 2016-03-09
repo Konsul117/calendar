@@ -1,0 +1,22 @@
+{
+  "name": "calendar",
+  "authors": [
+    "Konsul117 <konsul117@bk.ru>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fullcalendar": "~2.6.1"
+  }
+}
