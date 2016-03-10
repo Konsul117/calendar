@@ -2,13 +2,15 @@
 
 namespace app\assets;
 
-
+use yii\bootstrap\BootstrapPluginAsset;
 use yii\web\AssetBundle;
 
 /**
  * Ассеты для использования календаря
  */
 class AppFullCalendar extends AssetBundle {
+
+	public $sourcePath = __DIR__;
 
 	public $js = [
 		'js/app-calendar.js',
@@ -19,7 +21,9 @@ class AppFullCalendar extends AssetBundle {
 	];
 
 	public $depends = [
+		BootstrapPluginAsset::class,
 		FullCalendarAsset::class,
+		BootstrapDatetimePicker::class,
 	];
 
 }

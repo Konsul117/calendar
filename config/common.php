@@ -33,6 +33,9 @@ $config = [
 			'charset'  => 'utf8',
 		],
 	],
+	'params' => [
+		'defaultUTCOffset' => 10,
+	]
 ];
 
 //проверяем наличие локального конфига

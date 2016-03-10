@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\components\AjaxResponse;
-use app\models\Event;
+use app\components\CalendarEventFront;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -14,6 +14,8 @@ use yii\web\Response;
  * Контроллер календаря
  */
 class CalendarController extends Controller {
+
+	public $enableCsrfValidation = false;
 
 	/** @var AjaxResponse */
 	protected $ajaxResponse;
@@ -71,7 +73,7 @@ class CalendarController extends Controller {
 	 */
 	public function actionIndex() {
 		return $this->render('index', [
-			'eventModel' => (new Event()),
+			'eventModel' => (new CalendarEventFront()),
 		]);
 	}
 
@@ -81,25 +83,7 @@ class CalendarController extends Controller {
 	public function actionLoadEvents($from, $to) {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 
-		$this->ajaxResponse->data = [];
-
-		/** @var Event[] $events */
-		$events = Event::find()
-			->where([
-				'and',
-				Event::ATTR_START_DATE . ' >= "' . $from . '"',
-				Event::ATTR_END_DATE . ' <= "' .$to . '"'
-			])
-			->all();
-
-		if (!empty($events)) {
-			foreach ($events as $event) {
-				$this->ajaxResponse->data[] = [
-					'dateStart' => $event->start_date,
-					'title' => $event->title,
-				];
-			}
-		}
+		$this->ajaxResponse->data = CalendarEventFront::loadEventsByInterval($from, $to);
 
 		$this->ajaxResponse->success = true;
 	}
@@ -110,18 +94,19 @@ class CalendarController extends Controller {
 	public function actionEditEvent() {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 
-		$event = new Event();
-		$event->setScenario(Event::SCENARIO_EDIT_EVENT);
+		$event = new CalendarEventFront();
+		$event->setScenario(CalendarEventFront::SCENARIO_EDIT_EVENT);
 
 		if (Yii::$app->request->isPost) {
-			$event->load(Yii::$app->request->post());
+			$event->load(Yii::$app->request->post(), '');
 
 			if ($event->validate()) {
-				$this->ajaxResponse->success = $event->save();
+				$this->ajaxResponse->success    = $event->save();
+				$this->ajaxResponse->data['id'] = $event->id;
 			}
 			else {
 				$this->ajaxResponse->success = false;
-				$errors = $event->getFirstErrors();
+				$errors                      = $event->getFirstErrors();
 
 				if (!empty($errors)) {
 					$this->ajaxResponse->message = array_shift($errors);

@@ -3,6 +3,10 @@
 	opacity:          0.3;
 }
 
-.calendar-block .add-modal {
+.calendar-block .calendar-modal {
 	display: none;
+}
+
+.calendar-view-modal .event-row {
+	padding: 0.5em 0;
 }
