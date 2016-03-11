@@ -1,5 +1,7 @@
 <?php
 
+use app\models\User;
+
 $config = [
 	'id'         => 'basic',
 	'basePath'   => dirname(__DIR__),
@@ -10,8 +12,9 @@ $config = [
 			'cookieValidationKey' => 'pBD8fpmw1ZFcC5uTFUupYHhcINg5Y8f8',
 		],
 		'user'         => [
-			'identityClass'   => 'app\models\User',
+			'identityClass'   => User::class,
 			'enableAutoLogin' => true,
+			'loginUrl'        => ['user/login'],
 		],
 		'errorHandler' => [
 			'errorAction' => 'site/error',

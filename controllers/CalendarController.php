@@ -35,10 +35,8 @@ class CalendarController extends Controller {
 		return [
 			'access' => [
 				'class' => AccessControl::className(),
-				'only'  => ['logout'],
 				'rules' => [
 					[
-						'actions' => ['logout'],
 						'allow'   => true,
 						'roles'   => ['@'],
 					],
@@ -47,7 +45,7 @@ class CalendarController extends Controller {
 			'verbs'  => [
 				'class'   => VerbFilter::className(),
 				'actions' => [
-					'logout' => ['post'],
+					'delete-event' => ['post'],
 				],
 			],
 		];

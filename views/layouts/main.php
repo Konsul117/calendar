@@ -32,6 +32,14 @@ AppAsset::register($this);
     </div>
 </div>
 
+<footer class="footer">
+	<div class="container">
+		<?php if (!Yii::$app->user->isGuest): ?>
+			<?= Html::a('Выход', ['/user/logout']) ?>
+		<?php endif ?>
+	</div>
+</footer>
+
 <?php $this->endBody() ?>
 </body>
 </html>

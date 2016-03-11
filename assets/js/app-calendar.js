@@ -417,11 +417,6 @@
 
 			var buttons = [];
 
-			buttons.push({
-				type: 'default',
-				title: 'Закрыть'
-			});
-
 			if (!event.isCompleted) {
 				buttons.push({
 					type: 'success',
@@ -437,6 +432,11 @@
 			buttons.push({
 				type: 'danger',
 				title: 'Удалить'
+			});
+
+			buttons.push({
+				type: 'default',
+				title: 'Закрыть'
 			});
 
 			var $currentModal = methods.wrapModal(event.title, $viewModal.html(), buttons);
