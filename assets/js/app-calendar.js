@@ -383,16 +383,26 @@
 
 			var event = loadedEvents[eventId];
 
-			var $currentModal = methods.wrapModal(event.title, $viewModal.html(), [
-				{
-					type: 'default',
-					title: 'Закрыть'
-				},
-				{
-					type: 'info',
-					title: 'Правка'
-				}
-			]);
+			var buttons = [];
+
+			buttons.push({
+				type: 'default',
+				title: 'Закрыть'
+			});
+
+			if (!event.isCompleted) {
+				buttons.push({
+					type: 'success',
+					title: 'Завершить'
+				});
+			}
+
+			buttons.push({
+				type: 'info',
+				title: 'Правка'
+			});
+
+			var $currentModal = methods.wrapModal(event.title, $viewModal.html(), buttons);
 
 			$currentModal.find('[data-field=startDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.startDate));
 			$currentModal.find('[data-field=endDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.endDate));
@@ -402,6 +412,17 @@
 			);
 
 			$currentModal.modal();
+
+			$currentModal.find('button.btn-success').click(function() {
+				event.isCompleted = 1;
+				methods.saveEvent(event, function(success) {
+					if (success) {
+						$currentModal.modal('hide');
+					}
+				});
+
+				return false;
+			});
 
 			$currentModal.find('button.btn-info').click(function() {
 				$currentModal.on('hidden.bs.modal', function() {
