@@ -69,23 +69,23 @@ $this->title = 'My Yii Application';
 
 				<div class="calendar-view-modal">
 					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_START_DATE ?>">
-						<span class="lbl col-sm-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_START_DATE) ?></span>
-						<span class="value col-sm-8" data-role="event-row-value"></span>
+						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_START_DATE) ?></span>
+						<span class="value col-xs-8" data-role="event-row-value"></span>
 					</div>
 
 					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_END_DATE ?>">
-						<span class="lbl col-sm-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_END_DATE) ?></span>
-						<span class="value col-sm-8" data-role="event-row-value"></span>
+						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_END_DATE) ?></span>
+						<span class="value col-xs-8" data-role="event-row-value"></span>
 					</div>
 
 					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_DESCRIPTION ?>">
-						<span class="lbl col-sm-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_DESCRIPTION) ?></span>
-						<span class="value col-sm-8" data-role="event-row-value"></span>
+						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_DESCRIPTION) ?></span>
+						<span class="value col-xs-8" data-role="event-row-value"></span>
 					</div>
 
 					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_IS_COMPLETED ?>">
-						<span class="lbl col-sm-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_IS_COMPLETED) ?></span>
-						<span class="value col-sm-8" data-role="event-row-value"></span>
+						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_IS_COMPLETED) ?></span>
+						<span class="value col-xs-8" data-role="event-row-value"></span>
 					</div>
 				</div>
 

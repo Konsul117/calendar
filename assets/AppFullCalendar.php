@@ -24,6 +24,7 @@ class AppFullCalendar extends AssetBundle {
 		BootstrapPluginAsset::class,
 		FullCalendarAsset::class,
 		BootstrapDatetimePicker::class,
+		JsCookieAsset::class,
 	];
 
 }

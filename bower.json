@@ -17,6 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "fullcalendar": "~2.6.1"
+	"fullcalendar": "~2.6.1",
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37",
+    "js-cookie": "js-cookie/js-cookie#~2.1.0"
   }
 }

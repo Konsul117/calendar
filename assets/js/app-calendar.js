@@ -44,9 +44,38 @@
 
 	var activeEvent = null;
 
+	/**
+	 * Параметры просмотра.
+	 *
+	 * @type {{view: string, defaultDate: hooks}}
+	 */
+	var viewOptions = {
+		view:        'month',
+		defaultDate: new moment()
+	}
+
+	var COOKIE_VIEW_OPTIONS = 'calendarViewOptions';
+
 	var methods = {
 		init: function() {
+			methods.loadSession();
 			$panel = $(this).find('div[data-role=calendar-panel]');
+
+			/**
+			 * Функция изменения события мышью
+			 * @param calendarEvent
+			 */
+			var mouseChangeEvent = function(calendarEvent) {
+				var event = loadedEvents[calendarEvent.id];
+
+				event.startDate = calendarEvent.start;
+				event.endDate = calendarEvent.end;
+
+				methods.indicateLoading(true);
+				methods.saveEvent(event, function() {
+					methods.indicateLoading(false);
+				});
+			};
 
 			$panel.fullCalendar({
 				header:     {
@@ -55,34 +84,22 @@
 					right:  'month,agendaWeek,agendaDay'
 				},
 				timezone:   LOCAL_TIMEZONE,
-				viewRender: methods.calendarChangeView,
 				editable:   true,
 				selectable: true,
 				eventClick: function(calEvent) {
 					activeEvent = calEvent;
 					methods.viewEvent(calEvent.id);
 				},
-				eventDrop: function(calendarEvent) {
-					var event = loadedEvents[calendarEvent.id];
+				eventDrop: mouseChangeEvent,
+				eventResize: mouseChangeEvent,
+				defaultView: viewOptions.view,
+				defaultDate: viewOptions.defaultDate,
+				viewRender: function(view) {
+					methods.calendarChangeView(view);
 
-					event.startDate = calendarEvent.start;
-					event.endDate = calendarEvent.end;
-
-					methods.indicateLoading(true);
-					methods.saveEvent(event, function() {
-						methods.indicateLoading(false);
-					});
-				},
-				eventResize: function(calendarEvent) {
-					var event = loadedEvents[calendarEvent.id];
-
-					event.startDate = calendarEvent.start;
-					event.endDate = calendarEvent.end;
-
-					methods.indicateLoading(true);
-					methods.saveEvent(event, function() {
-						methods.indicateLoading(false);
-					});
+					viewOptions.view = view.name;
+					viewOptions.defaultDate = view.start;
+					methods.saveSesion();
 				}
 			});
 
@@ -105,6 +122,20 @@
 			$viewModal = $(this).find('div[data-role=calendar-view-modal]');
 		},
 
+		/**
+		 * Загрузить параметры просмотра из сессии.
+		 */
+		loadSession: function() {
+			viewOptions = Cookies.getJSON(COOKIE_VIEW_OPTIONS);
+		},
+
+		/**
+		 * Сохранить параметры просмотра в сессию.
+		 */
+		saveSesion: function() {
+			Cookies.set(COOKIE_VIEW_OPTIONS, viewOptions);
+		},
+
 		resizeCalendarByWindow: function() {
 			$panel.fullCalendar('option', 'height', $('.main-container').height());
 		},
@@ -123,8 +154,9 @@
 		},
 
 		/**
+		 * Расстановка событий в календаре.
 		 *
-		 * @param {bool} events
+		 * @param {bool} success
 		 */
 		setEvents: function(success) {
 
@@ -176,8 +208,6 @@
 					 * @property {string} dateEnd
 					 */
 
-					/** @type {CalendarEvent[]} result */
-					var result = [];
 					if (response.success) {
 
 						for (var i = 0; i < response.data.length; i++) {
@@ -250,11 +280,6 @@
 							.minDate(data.date);
 
 					}
-					else if($(this).data('field') === 'endDate') {
-						$addModal.find('[data-role=datetimepicker][data-field=startDate]').datetimepicker().data('DateTimePicker')
-							.maxDate(data.date);
-					}
-
 				});
 
 			$addModal.modal();
