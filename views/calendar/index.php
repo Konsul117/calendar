@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /** @var $this View * */
 /** @var CalendarEventFront $eventModel */
 
-$this->title = 'My Yii Application';
+$this->title = 'Календарь';
 ?>
 <div class="site-index">
 
