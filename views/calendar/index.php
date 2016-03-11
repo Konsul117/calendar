@@ -54,7 +54,7 @@ $this->title = 'My Yii Application';
 								'data-field' => CalendarEventFront::ATTR_DESCRIPTION,
 								'class'     => 'form-control',
 						]
-				]) ?>
+				])->textarea() ?>
 
 				<?= $form->field($eventModel, CalendarEventFront::ATTR_IS_COMPLETED)->checkbox([
 						'data-field' => CalendarEventFront::ATTR_IS_COMPLETED,

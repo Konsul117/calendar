@@ -406,7 +406,7 @@
 
 			$currentModal.find('[data-field=startDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.startDate));
 			$currentModal.find('[data-field=endDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.endDate));
-			$currentModal.find('[data-field=description] [data-role=event-row-value]').text(event.description);
+			$currentModal.find('[data-field=description] [data-role=event-row-value]').html(event.description.replace(/\n/g, '<br/>'));
 			$currentModal.find('[data-field=isCompleted] [data-role=event-row-value]').html(
 				event.isCompleted ? ('<span class="glyphicon glyphicon-ok"></span>') : ''
 			);
