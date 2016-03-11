@@ -53,7 +53,7 @@
 	var viewOptions = {
 		view:        'month',
 		defaultDate: new moment()
-	}
+	};
 
 	var COOKIE_VIEW_OPTIONS = 'calendarViewOptions';
 
@@ -99,7 +99,7 @@
 					methods.calendarChangeView(view);
 
 					viewOptions.view = view.name;
-					viewOptions.defaultDate = view.start;
+					viewOptions.defaultDate = view.intervalStart;
 					methods.saveSesion();
 				}
 			});
@@ -127,14 +127,17 @@
 		 * Загрузить параметры просмотра из сессии.
 		 */
 		loadSession: function() {
-			viewOptions = Cookies.getJSON(COOKIE_VIEW_OPTIONS);
+			var loadedData = Cookies.getJSON(COOKIE_VIEW_OPTIONS);
+			if (loadedData !== undefined) {
+				viewOptions = loadedData;
+			}
 		},
 
 		/**
 		 * Сохранить параметры просмотра в сессию.
 		 */
 		saveSesion: function() {
-			Cookies.set(COOKIE_VIEW_OPTIONS, viewOptions);
+			Cookies.set(COOKIE_VIEW_OPTIONS, viewOptions, {expires: 365});
 		},
 
 		resizeCalendarByWindow: function() {
