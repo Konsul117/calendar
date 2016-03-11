@@ -167,4 +167,22 @@ class CalendarEventFront extends Model {
 		return $result;
 	}
 
+	/**
+	 * Удаление события
+	 *
+	 * @param int $eventId
+	 *
+	 * @return bool
+	 */
+	public static function deleteEventById($eventId) {
+		/** @var CalendarEvent $model */
+		$model = CalendarEvent::findOne($eventId);
+
+		if ($model === null) {
+			return false;
+		}
+
+		return (bool) $model->delete();
+	}
+
 }

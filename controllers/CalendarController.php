@@ -78,7 +78,10 @@ class CalendarController extends Controller {
 	}
 
 	/**
+	 * Загрузка набора событий в пределах указанных дат.
 	 *
+	 * @param string $from
+	 * @param string $to
 	 */
 	public function actionLoadEvents($from, $to) {
 		Yii::$app->response->format = Response::FORMAT_JSON;
@@ -89,7 +92,7 @@ class CalendarController extends Controller {
 	}
 
 	/**
-	 *
+	 * Правка события.
 	 */
 	public function actionEditEvent() {
 		Yii::$app->response->format = Response::FORMAT_JSON;
@@ -113,6 +116,18 @@ class CalendarController extends Controller {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Удаление события.
+	 *
+	 * @param int $event_id
+	 */
+	public function actionDeleteEvent() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$event_id =Yii::$app->request->post('event_id');
+		$this->ajaxResponse->success = CalendarEventFront::deleteEventById($event_id);
 	}
 
 }

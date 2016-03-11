@@ -41,6 +41,7 @@
 	var DATETIME_OUT_FORMAT = 'DD.MM.YYYY HH:mm:ss';
 	var LOAD_EVENTS_URL = 'calendar/load-events/';
 	var EDIT_EVENT_URL = 'calendar/edit-event/';
+	var DELETE_EVENT_URL = 'calendar/delete-event/';
 
 	var activeEvent = null;
 
@@ -196,7 +197,7 @@
 					 * @description Результат ответа от сервера.
 					 *
 					 * @property {boolean}                          success              Результат выполнения операции
-					 * @property {EventResponse[]}                  data                Данные, которые вернул сервер
+					 * @property {CalendarEvent[]}                  data                Данные, которые вернул сервер
 					 * @property {string}                           message             Текст сообщения для пользователя
 					 */
 
@@ -289,11 +290,10 @@
 
 				var eventId = $addModal.find('[data-field=id]').val();
 
+				var event = {};
+
 				if (eventId) {
-					var event = loadedEvents[eventId];
-				}
-				else {
-					var event = {};
+					event = loadedEvents[eventId];
 				}
 
 				event.startDate = new moment($form.find('[data-field=startDate]').val(), DATETIME_OUT_FORMAT);
@@ -366,6 +366,35 @@
 			});
 		},
 
+		deleteEvent: function(event, finishCallback) {
+			$.ajax({
+				method:  'post',
+				data:    {'event_id': event.id},
+				url:     DELETE_EVENT_URL,
+				success: function(response) {
+					/** @param {loadEventsResponse} response */
+					if (response.success) {
+						delete loadedEvents[event.id];
+					}
+					else {
+						if (response.message) {
+							alert('Ошибка при удалении события: '+response.message);
+						}
+						else {
+							alert('Неизвестная ошибка при удалении события.');
+						}
+					}
+
+					finishCallback(response.success);
+
+				},
+				error:   function() {
+					alert('Произошла ошибка при удалении события');
+					finishCallback(false);
+				}
+			});
+		},
+
 		actualizeEvent: function(event, calendarEvent) {
 			methods.bindCalendarEvent(event, calendarEvent);
 
@@ -402,6 +431,11 @@
 				title: 'Правка'
 			});
 
+			buttons.push({
+				type: 'danger',
+				title: 'Удалить'
+			});
+
 			var $currentModal = methods.wrapModal(event.title, $viewModal.html(), buttons);
 
 			$currentModal.find('[data-field=startDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.startDate));
@@ -418,6 +452,23 @@
 				methods.saveEvent(event, function(success) {
 					if (success) {
 						$currentModal.modal('hide');
+					}
+				});
+
+				return false;
+			});
+
+			$currentModal.find('button.btn-danger').click(function() {
+				if (!confirm('Действительно удалить событие "' + event.title + '"?')) {
+					return ;
+				}
+
+				event.isCompleted = 1;
+				methods.deleteEvent(event, function(success) {
+					if (success) {
+						$currentModal.modal('hide');
+
+						$panel.fullCalendar(ACTION_REMOVE_EVENTS, event.id);
 					}
 				});
 
