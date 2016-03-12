@@ -6,8 +6,9 @@
 	 * @description Объект события
 	 *
 	 * @property {int} id Идентификатор события
-	 * @property {Date} startDate Дата-время начала события
-	 * @property {Date} endDate Дата-время окончания события
+	 * @property {moment} startDate Дата-время начала события
+	 * @property {moment} endDate Дата-время окончания события
+	 * @property {moment} realEndDate Дата-время фактического окончания события
 	 * @property {string} title Название событи
 	 * @property {string} description Описание события
 	 * @property {bool} isCompleted Событие завершено
@@ -111,7 +112,7 @@
 				event.endDate = calendarEvent.end;
 
 				methods.indicateLoading(true);
-				methods.saveEvent(event, function() {
+				methods.apiSaveEvent(event, function() {
 					methods.actualizeEvent(event, calendarEvent);
 					methods.indicateLoading(false);
 				});
@@ -260,6 +261,7 @@
 								id:          item.id,
 								startDate:   (new moment(item.startDate, DATETIME_OUT_FORMAT)),
 								endDate:     (new moment(item.endDate, DATETIME_OUT_FORMAT)),
+								realEndDate: (new moment(item.realEndDate, DATETIME_OUT_FORMAT)),
 								title:       item.title,
 								description: item.description,
 								isCompleted: item.isCompleted
@@ -339,11 +341,15 @@
 
 				var eventId = $addModal.find('[data-field=id]').val();
 
+				/** @type {CalendarEvent} */
 				var event = {};
 
 				if (eventId) {
 					event = loadedEvents[eventId];
 				}
+
+				/** @param {boolean} isCompletedBefore Было ли событие завершено до обновления данных из формы */
+				var isCompletedBefore = event.isCompleted;
 
 				event.startDate = new moment($form.find('[data-field=startDate]').val(), DATETIME_OUT_FORMAT);
 				event.endDate = new moment($form.find('[data-field=endDate]').val(), DATETIME_OUT_FORMAT);
@@ -351,7 +357,16 @@
 				event.description = $form.find('[data-field=description]').val();
 				event.isCompleted = $form.find('[data-field=isCompleted]').prop('checked');
 
-				methods.saveEvent(event, function(success) {
+				//если событие стало завершено, то проставляем дату фактического завершения
+				if (isCompletedBefore !== undefined && isCompletedBefore !== event.isCompleted) {
+					event.realEndDate = new moment();
+				}
+
+				if (event.realEndDate === undefined) {
+					event.realEndDate = new moment(null);
+				}
+
+				methods.apiSaveEvent(event, function(success) {
 					if (success) {
 
 						if (activeEvent !== null) {
@@ -379,8 +394,13 @@
 			});
 		},
 
-		saveEvent: function(event, finishCallback) {
-
+		/**
+		 * Сохранение события на сервере через api.
+		 *
+		 * @param {CalendarEvent} event Событие
+		 * @param {function} finishCallback Коллбэк-функция, вызываемя после завершения операции.
+		 */
+		apiSaveEvent: function(event, finishCallback) {
 			var data = {
 				id:          event.id,
 				startDate:   methods.dateConvertToOut(event.startDate),
@@ -389,6 +409,13 @@
 				description: event.description,
 				isCompleted: event.isCompleted ? 1 : 0
 			};
+
+			if (event.realEndDate !== null) {
+				data.realEndDate = methods.dateConvertToOut(event.realEndDate);
+			}
+			else {
+				data.realEndDate = null;
+			}
 
 			$.ajax({
 				method:  'post',
@@ -418,7 +445,13 @@
 			});
 		},
 
-		deleteEvent: function(event, finishCallback) {
+		/**
+		 * Удаление события на сервере через api.
+		 *
+		 * @param {CalendarEvent} event Событие
+		 * @param {function} finishCallback Коллбэк-функция, вызываемя после завершения операции.
+		 */
+		apiDeleteEvent: function(event, finishCallback) {
 			$.ajax({
 				method:  'post',
 				data:    {'event_id': event.id},
@@ -510,6 +543,7 @@
 
 			$currentModal.find('[data-field=startDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.startDate));
 			$currentModal.find('[data-field=endDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.endDate));
+			$currentModal.find('[data-field=realEndDate] [data-role=event-row-value]').text(methods.dateConvertToOut(event.realEndDate));
 			$currentModal.find('[data-field=description] [data-role=event-row-value]').html(event.description.replace(/\n/g, '<br/>'));
 			$currentModal.find('[data-field=isCompleted] [data-role=event-row-value]').html(
 				event.isCompleted ? ('<span class="glyphicon glyphicon-ok"></span>') : ''
@@ -525,9 +559,12 @@
 				//переключаем состояние кнопки на загрузку
 				methods.buttonSwitchLoading($button, true);
 
-				event.isCompleted = 1;
+				event.isCompleted = true;
 
-				methods.saveEvent(event, function(success) {
+				//проставляем дату фактического завершения
+				event.realEndDate = new moment();
+
+				methods.apiSaveEvent(event, function(success) {
 					if (success) {
 						methods.actualizeEvent(event, activeEvent);
 						$currentModal.modal('hide');
@@ -553,7 +590,7 @@
 				//переключаем состояние кнопки на загрузку
 				methods.buttonSwitchLoading($button, true);
 
-				methods.deleteEvent(event, function(success) {
+				methods.apiDeleteEvent(event, function(success) {
 					if (success) {
 						$currentModal.modal('hide');
 
@@ -642,6 +679,9 @@
 		},
 
 		dateConvertToOut: function(date) {
+			if (date.isValid() === false) {
+				return '-';
+			}
 			return date.format(DATETIME_OUT_FORMAT);
 		},
 
@@ -649,7 +689,7 @@
 		 * Сменить состояние загрузки у кнопки.
 		 *
 		 * @param {jQuery} $button Кнопка
-		 * @param {bool} state Состояние. true - загрузка, false - загрузка закончена.
+		 * @param {boolean} state Состояние. true - загрузка, false - загрузка закончена.
 		 */
 		buttonSwitchLoading: function($button, state) {
 			//переключаем css-класс в зависимости от состояния.
@@ -686,7 +726,7 @@
 				$button.css('height', 'auto');
 
 				//разблокируем кнопку
-				$button.prop('disabled', true);
+				$button.prop('disabled', false);
 			}
 		}
 	};

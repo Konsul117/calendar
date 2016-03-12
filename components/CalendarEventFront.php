@@ -20,6 +20,9 @@ class CalendarEventFront extends Model {
 	/** @var string Дата-время окончания события */
 	public $endDate;
 
+	/** @var string Дата-время фактического окончания события */
+	public $realEndDate;
+
 	/** @var string Название события */
 	public $title;
 
@@ -29,12 +32,13 @@ class CalendarEventFront extends Model {
 	/** @var bool Событие завершено */
 	public $isCompleted;
 
-	const ATTR_ID           = 'id';
-	const ATTR_START_DATE   = 'startDate';
-	const ATTR_END_DATE     = 'endDate';
-	const ATTR_TITLE        = 'title';
-	const ATTR_DESCRIPTION  = 'description';
-	const ATTR_IS_COMPLETED = 'isCompleted';
+	const ATTR_ID            = 'id';
+	const ATTR_START_DATE    = 'startDate';
+	const ATTR_END_DATE      = 'endDate';
+	const ATTR_REAL_END_DATE = 'realEndDate';
+	const ATTR_TITLE         = 'title';
+	const ATTR_DESCRIPTION   = 'description';
+	const ATTR_IS_COMPLETED  = 'isCompleted';
 
 	/**
 	 * Загрузка данных из модели события в БД
@@ -54,6 +58,15 @@ class CalendarEventFront extends Model {
 			->setTimezone($localZone)
 			->format(DateTime::FRONT_OUT_FORMAT);
 
+		if (!$model->real_end_date) {
+			$this->realEndDate = null;
+		}
+		else {
+			$this->realEndDate = (new DateTime($model->real_end_date, $utcZone))
+				->setTimezone($localZone)
+				->format(DateTime::FRONT_OUT_FORMAT);
+		}
+
 		$this->title       = $model->title;
 		$this->description = $model->description;
 		$this->isCompleted = (bool)$model->is_completed;
@@ -64,11 +77,12 @@ class CalendarEventFront extends Model {
 	 */
 	public function attributeLabels() {
 		return [
-			static::ATTR_START_DATE   => 'Начало',
-			static::ATTR_END_DATE     => 'Конец',
-			static::ATTR_TITLE        => 'Название',
-			static::ATTR_DESCRIPTION  => 'Описание',
-			static::ATTR_IS_COMPLETED => 'Завершено',
+			static::ATTR_START_DATE    => 'Начало',
+			static::ATTR_END_DATE      => 'Конец',
+			static::ATTR_REAL_END_DATE => 'Фактическое окончание',
+			static::ATTR_TITLE         => 'Название',
+			static::ATTR_DESCRIPTION   => 'Описание',
+			static::ATTR_IS_COMPLETED  => 'Завершено',
 		];
 	}
 
@@ -81,6 +95,7 @@ class CalendarEventFront extends Model {
 				static::ATTR_ID,
 				static::ATTR_START_DATE,
 				static::ATTR_END_DATE,
+				static::ATTR_REAL_END_DATE,
 				static::ATTR_TITLE,
 				static::ATTR_DESCRIPTION,
 				static::ATTR_IS_COMPLETED,
@@ -99,6 +114,7 @@ class CalendarEventFront extends Model {
 	 */
 	public function save() {
 		if ($this->id) {
+			/** @var CalendarEvent $model */
 			$model = CalendarEvent::findOne($this->id);
 
 			if ($model === null) {
@@ -114,12 +130,17 @@ class CalendarEventFront extends Model {
 		$localZone = DateTimeZone::getDefault();
 
 		//создаём объекты дат
-		$startDate = DateTime::createFromAnyFormat($this->startDate, $localZone);
-		$endDate   = DateTime::createFromAnyFormat($this->endDate, $localZone);
+		$startDate   = DateTime::createFromAnyFormat($this->startDate, $localZone);
+		$endDate     = DateTime::createFromAnyFormat($this->endDate, $localZone);
+		$realEndDate = DateTime::createFromAnyFormat($this->realEndDate, $localZone);
 
 		//переводим таймзоны даты в UTC и передаём в модель
-		$model->start_date = $startDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
-		$model->end_date   = $endDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		$model->start_date    = $startDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		$model->end_date      = $endDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+
+		if ($realEndDate !== false) {
+			$model->real_end_date = $realEndDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		}
 
 		$model->title        = $this->title;
 		$model->description  = $this->description;

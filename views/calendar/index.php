@@ -78,6 +78,11 @@ $this->title = 'Календарь';
 						<span class="value col-xs-8" data-role="event-row-value"></span>
 					</div>
 
+					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_REAL_END_DATE ?>">
+						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_REAL_END_DATE) ?></span>
+						<span class="value col-xs-8" data-role="event-row-value"></span>
+					</div>
+
 					<div class="event-row row" data-field="<?= CalendarEventFront::ATTR_DESCRIPTION ?>">
 						<span class="lbl col-xs-4"><?= $eventModel->getAttributeLabel(CalendarEventFront::ATTR_DESCRIPTION) ?></span>
 						<span class="value col-xs-8" data-role="event-row-value"></span>
