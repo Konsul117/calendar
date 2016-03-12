@@ -182,9 +182,9 @@ class CalendarEventFront extends Model {
 		/** @var CalendarEvent[] $events */
 		$events = CalendarEvent::find()
 			->where([
-				'and',
-				CalendarEvent::ATTR_START_DATE . ' >= "' . $startDate->format(DateTime::DB_FORMAT) . '"',
-				CalendarEvent::ATTR_END_DATE . ' <= "' . $endDate->format(DateTime::DB_FORMAT) . '"',
+				'or',
+				CalendarEvent::ATTR_START_DATE . ' BETWEEN "' . $startDate->format(DateTime::DB_FORMAT) . '" AND "' . $endDate->format(DateTime::DB_FORMAT) . '"',
+				CalendarEvent::ATTR_END_DATE . ' BETWEEN "' . $startDate->format(DateTime::DB_FORMAT) . '" AND "' . $endDate->format(DateTime::DB_FORMAT) . '"',
 			])
 			->all();
 
