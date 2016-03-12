@@ -109,14 +109,17 @@ class CalendarEventFront extends Model {
 			$model = new CalendarEvent();
 		}
 
+		//создаём объекты для таймзон, с которыми работаем
 		$utcZone   = new DateTimeZone('UTC');
 		$localZone = DateTimeZone::getDefault();
 
-		$startDate         = DateTime::createFromAnyFormat($this->startDate, $localZone);
-		$model->start_date = $startDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		//создаём объекты дат
+		$startDate = DateTime::createFromAnyFormat($this->startDate, $localZone);
+		$endDate   = DateTime::createFromAnyFormat($this->endDate, $localZone);
 
-		$endDate         = DateTime::createFromAnyFormat($this->endDate, $localZone);
-		$model->end_date = $endDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		//переводим таймзоны даты в UTC и передаём в модель
+		$model->start_date = $startDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
+		$model->end_date   = $endDate->setTimezone($utcZone)->format(DateTime::DB_FORMAT);
 
 		$model->title        = $this->title;
 		$model->description  = $this->description;
@@ -143,8 +146,17 @@ class CalendarEventFront extends Model {
 		/** @var static[] $result */
 		$result = [];
 
-		$startDate = DateTime::createFromAnyFormat($dateFrom, DateTimeZone::getDefault());
-		$endDate   = DateTime::createFromAnyFormat($dateTo, DateTimeZone::getDefault());
+		//создаём объекты для таймзон, с которыми работаем
+		$utcZone   = new DateTimeZone('UTC');
+		$localZone = DateTimeZone::getDefault();
+
+		//создаём объекты дат
+		$startDate = DateTime::createFromAnyFormat($dateFrom, $localZone);
+		$endDate   = DateTime::createFromAnyFormat($dateTo, $localZone);
+
+		//переводим таймзоны дат в UTC
+		$startDate->setTimezone($utcZone);
+		$endDate->setTimezone($utcZone);
 
 		/** @var CalendarEvent[] $events */
 		$events = CalendarEvent::find()
