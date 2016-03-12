@@ -34,6 +34,7 @@
 	var loadedEvents = [];
 
 	var LOADING_INDICATOR_CLASS = 'loading-indicator';
+	var LOADING_BUTTON_CLASS = 'btn-loading';
 	var LOCAL_TIMEZONE = 'local';
 	var ACTION_RENDER_EVENT = 'renderEvent';
 	var ACTION_REMOVE_EVENTS = 'removeEvents';
@@ -44,6 +45,27 @@
 	var DELETE_EVENT_URL = 'calendar/delete-event/';
 
 	var activeEvent = null;
+
+	/**
+	 * Html-код индикации загрузки для кнопки
+	 * @type {string}
+	 */
+	var BUTTON_LOADING_ANIM_HTML = '<div id="fountainG">'
+		+ '<div id="fountainG_1" class="fountainG"></div>'
+		+ '<div id="fountainG_2" class="fountainG"></div>'
+		+ '<div id="fountainG_3" class="fountainG"></div>'
+		+ '<div id="fountainG_4" class="fountainG"></div>'
+		+ '<div id="fountainG_5" class="fountainG"></div>'
+		+ '<div id="fountainG_6" class="fountainG"></div>'
+		+ '<div id="fountainG_7" class="fountainG"></div>'
+		+ '<div id="fountainG_8" class="fountainG"></div>'
+		+ '</div>';
+
+	/**
+	 * Селектор для блока анимации у кнопки
+	 * @type {string}
+	 */
+	var BUTTON_LOADING_ANIM_SELECTOR = '.fountainG';
 
 	/**
 	 * Параметры просмотра.
@@ -287,7 +309,14 @@
 				});
 
 			$addModal.modal();
+
+			//обрабатываем событие клика на кнопке "Сохранить"
 			$addModal.find('button.btn-success').click(function() {
+				//сохраняем jquery-объект кнопки
+				var $button = $(this);
+
+				//переключаем состояние кнопки на загрузку
+				methods.buttonSwitchLoading($button, true);
 
 				var $form = $addModal.find('form');
 
@@ -323,6 +352,9 @@
 
 						$addModal.modal('hide');
 					}
+
+					//выключаем у кнопки состояние загрузки
+					methods.buttonSwitchLoading($button, false);
 				});
 
 				return false;
@@ -338,7 +370,7 @@
 				endDate:     methods.dateConvertToOut(event.endDate),
 				title:       event.title,
 				description: event.description,
-				isCompleted: event.isCompleted
+				isCompleted: event.isCompleted ? 1 : 0
 			};
 
 			$.ajax({
@@ -376,10 +408,7 @@
 				url:     DELETE_EVENT_URL,
 				success: function(response) {
 					/** @param {loadEventsResponse} response */
-					if (response.success) {
-						delete loadedEvents[event.id];
-					}
-					else {
+					if (!response.success) {
 						if (response.message) {
 							alert('Ошибка при удалении события: '+response.message);
 						}
@@ -450,35 +479,61 @@
 
 			$currentModal.modal();
 
+			//обрабатываем событие клика на кнопке "Заврешить"
 			$currentModal.find('button.btn-success').click(function() {
+				//сохраняем jquery-объект кнопки
+				var $button = $(this);
+
+				//переключаем состояние кнопки на загрузку
+				methods.buttonSwitchLoading($button, true);
+
 				event.isCompleted = 1;
+
 				methods.saveEvent(event, function(success) {
 					if (success) {
 						$currentModal.modal('hide');
 					}
+
+					//выключаем у кнопки состояние загрузки
+					methods.buttonSwitchLoading($button, false);
 				});
 
 				return false;
 			});
 
+			//обрабатываем событие клика на кнопке "Удалить"
 			$currentModal.find('button.btn-danger').click(function() {
+
 				if (!confirm('Действительно удалить событие "' + event.title + '"?')) {
-					return ;
+					return false;
 				}
 
-				event.isCompleted = 1;
+				//сохраняем jquery-объект кнопки
+				var $button = $(this);
+
+				//переключаем состояние кнопки на загрузку
+				methods.buttonSwitchLoading($button, true);
+
 				methods.deleteEvent(event, function(success) {
 					if (success) {
 						$currentModal.modal('hide');
 
+						delete loadedEvents[event.id];
+
 						$panel.fullCalendar(ACTION_REMOVE_EVENTS, event.id);
 					}
+
+					//выключаем у кнопки состояние загрузки
+					methods.buttonSwitchLoading($button, false);
 				});
 
 				return false;
 			});
 
+			//обрабатываем событие клика на кнопке "Правка"
 			$currentModal.find('button.btn-info').click(function() {
+				//вызываем окно редактирования события по триггеру закрытия текущего окна
+				//чтобы новое окно открылось только после закрытия текущего
 				$currentModal.on('hidden.bs.modal', function() {
 					methods.editEvent(event.id);
 				});
@@ -549,6 +604,51 @@
 
 		dateConvertToOut: function(date) {
 			return date.format(DATETIME_OUT_FORMAT);
+		},
+
+		/**
+		 * Сменить состояние загрузки у кнопки.
+		 *
+		 * @param {jQuery} $button Кнопка
+		 * @param {bool} state Состояние. true - загрузка, false - загрузка закончена.
+		 */
+		buttonSwitchLoading: function($button, state) {
+			//переключаем css-класс в зависимости от состояния.
+			$button.toggleClass(LOADING_BUTTON_CLASS, state);
+
+			if (state) {
+				//если идёт загрука
+				//заменяем ширину и высоту на текущее значение
+				$button.css('width', $button.outerWidth());
+				$button.css('height', $button.outerHeight());
+
+				//убираем текст (переносим в data-параметр)
+				$button.data('text', $button.text());
+				$button.text('');
+
+				//добавляем html анимации
+				$button.append(BUTTON_LOADING_ANIM_HTML);
+
+				//и блокируем кнопку
+				$button.prop('disabled', true);
+			}
+			else {
+				//если загрузка закончена, то возвращаем кнопку к её первоначальному состоянию
+
+				//удаляем анимацию
+				$button.find(BUTTON_LOADING_ANIM_SELECTOR).remove();
+
+				//возвращаем обратно текст
+				$button.text($button.data('text'));
+				$button.data('text', null);
+
+				//возвращаем обратно ширину и высоту, выставляемую автоматически
+				$button.css('width', 'auto');
+				$button.css('height', 'auto');
+
+				//разблокируем кнопку
+				$button.prop('disabled', true);
+			}
 		}
 	};
 
