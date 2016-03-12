@@ -103,7 +103,7 @@
 
 			/**
 			 * Функция изменения события мышью
-			 * @param calendarEvent
+			 * @param {CalendarPluginEvent} calendarEvent
 			 */
 			var mouseChangeEvent = function(calendarEvent) {
 				var event = loadedEvents[calendarEvent.id];
