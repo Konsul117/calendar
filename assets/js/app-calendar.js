@@ -358,7 +358,7 @@
 				event.isCompleted = $form.find('[data-field=isCompleted]').prop('checked');
 
 				//если событие стало завершено, то проставляем дату фактического завершения
-				if (isCompletedBefore !== undefined && isCompletedBefore !== event.isCompleted) {
+				if (isCompletedBefore !== undefined && event.isCompleted && isCompletedBefore !== event.isCompleted) {
 					event.realEndDate = new moment();
 				}
 
@@ -410,11 +410,11 @@
 				isCompleted: event.isCompleted ? 1 : 0
 			};
 
-			if (event.realEndDate !== null) {
-				data.realEndDate = methods.dateConvertToOut(event.realEndDate);
+			if (event.realEndDate.isValid() === false) {
+				data.realEndDate = null;
 			}
 			else {
-				data.realEndDate = null;
+				data.realEndDate = methods.dateConvertToOut(event.realEndDate);
 			}
 
 			$.ajax({
