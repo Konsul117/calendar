@@ -193,3 +193,17 @@
 button.btn-loading {
 	color: transparent;
 }
+
+/** Классы индикации состояний события */
+
+.event-is-new {
+	background-color: #3a87ad;
+}
+
+.event-is-completed {
+	background-color: #449D44;
+}
+
+.event-is-overdue {
+	background-color: #D9534F;
+}

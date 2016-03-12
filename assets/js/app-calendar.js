@@ -14,6 +14,18 @@
 	 */
 
 	/**
+	 * @typedef {object} CalendarPluginEvent
+	 *
+	 * @description Объект события для плагина календаря
+	 *
+	 * @property {int} id Идентификатор события
+	 * @property {string} title Название событи
+	 * @property {moment} start Дата-время начала события
+	 * @property {moment} end Дата-время окончания события
+	 * @property {String} className CSS-класс
+	 */
+
+	/**
 	 * Панель календаря
 	 * @type {jQuery}
 	 */
@@ -43,6 +55,10 @@
 	var LOAD_EVENTS_URL = 'calendar/load-events/';
 	var EDIT_EVENT_URL = 'calendar/edit-event/';
 	var DELETE_EVENT_URL = 'calendar/delete-event/';
+
+	var EVENT_CLASS_NEW = 'event-is-new';
+	var EVENT_CLASS_OVERDUE = 'event-is-overdue';
+	var EVENT_CLASS_COMPLETED = 'event-is-completed';
 
 	var activeEvent = null;
 
@@ -96,6 +112,7 @@
 
 				methods.indicateLoading(true);
 				methods.saveEvent(event, function() {
+					methods.actualizeEvent(event, calendarEvent);
 					methods.indicateLoading(false);
 				});
 			};
@@ -433,11 +450,32 @@
 			$panel.fullCalendar('updateEvent', calendarEvent);
 		},
 
-		bindCalendarEvent: function(event, calendarEvent) {
-			calendarEvent.id = event.id;
-			calendarEvent.start = event.startDate;
-			calendarEvent.end = event.endDate;
-			calendarEvent.title = event.title;
+		/**
+		 *
+		 * @param {CalendarEvent} event
+		 * @param {CalendarPluginEvent} calendarPluginEvent
+		 */
+		bindCalendarEvent: function(event, calendarPluginEvent) {
+			calendarPluginEvent.id = event.id;
+			calendarPluginEvent.start = event.startDate;
+			calendarPluginEvent.end = event.endDate;
+			calendarPluginEvent.title = event.title;
+
+			var eventClass = '';
+
+			var currentMoment = new moment();
+
+			if (event.isCompleted) {
+				eventClass = EVENT_CLASS_COMPLETED;
+			}
+			else if (event.startDate < currentMoment && event.endDate < currentMoment) {
+				eventClass = EVENT_CLASS_OVERDUE;
+			}
+			else {
+				eventClass = EVENT_CLASS_NEW;
+			}
+
+			calendarPluginEvent.className = eventClass;
 		},
 
 		viewEvent: function(eventId) {
@@ -491,6 +529,7 @@
 
 				methods.saveEvent(event, function(success) {
 					if (success) {
+						methods.actualizeEvent(event, activeEvent);
 						$currentModal.modal('hide');
 					}
 
