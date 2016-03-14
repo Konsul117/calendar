@@ -317,15 +317,39 @@
 				$addModal.find('[data-field=isCompleted]').prop('checked', event.isCompleted);
 			}
 
+			/** @param {jQuery} Поле даты начала */
+			var $startDate = $addModal.find('[data-role=datetimepicker][data-field=startDate]');
+			/** @param {jQuery} Поле даты окончания */
+			var $endDate = $addModal.find('[data-role=datetimepicker][data-field=endDate]');
+
 			$addModal.find('[data-role=datetimepicker]').datetimepicker()
 				.on('dp.change', function(data) {
 
 					if ($(this).data('field') === 'startDate') {
-						$addModal.find('[data-role=datetimepicker][data-field=endDate]').datetimepicker().data('DateTimePicker')
+						$endDate.datetimepicker().data('DateTimePicker')
 							.minDate(data.date);
 
 					}
 				});
+
+			$addModal.find('[data-role=add_time]').click(function() {
+
+				var startDate = $startDate.datetimepicker()
+					.data('DateTimePicker').date();
+
+				if (startDate === null) {
+					return ;
+				}
+
+				var hoursCount = $(this).data('value');
+				var changeType = $(this).data('type');
+
+				$endDate.datetimepicker()
+					.data('DateTimePicker')
+					.date(startDate.add(hoursCount, changeType));
+
+				return false;
+			});
 
 			$addModal.modal();
 

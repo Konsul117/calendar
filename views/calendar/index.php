@@ -26,21 +26,47 @@ $this->title = 'Календарь';
 							'data-field' => CalendarEventFront::ATTR_ID,
 					])->label(false) ?>
 
-				<?= $form->field($eventModel, CalendarEventFront::ATTR_START_DATE, [
-					'inputOptions' => [
-							'data-field' => CalendarEventFront::ATTR_START_DATE,
-							'class'     => 'form-control',
-							'data-role' => 'datetimepicker',
-					],
-				]) ?>
+				<div class="form-group">
+					<label>Начало</label>
 
-				<?= $form->field($eventModel, CalendarEventFront::ATTR_END_DATE, [
-						'inputOptions' => [
-								'data-field' => CalendarEventFront::ATTR_END_DATE,
-								'class'     => 'form-control',
-								'data-role' => 'datetimepicker',
-						],
-				]) ?>
+					<div class="col-xs-12 row">
+						<div class="col-xs-6 row">
+							<?= $form->field($eventModel, CalendarEventFront::ATTR_START_DATE, [
+									'class'=>\app\components\ActiveFieldCustom::class,
+									'noWrap'=>true,
+									'inputOptions' => [
+											'data-field' => CalendarEventFront::ATTR_START_DATE,
+											'class'     => 'form-control',
+											'data-role' => 'datetimepicker',
+									],
+							])->label(false) ?>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Конец</label>
+
+					<div class="col-xs-12 row">
+						<div class="col-xs-6 row">
+							<?= $form->field($eventModel, CalendarEventFront::ATTR_END_DATE, [
+									'class'=>\app\components\ActiveFieldCustom::class,
+									'noWrap'=>true,
+									'inputOptions' => [
+											'data-field' => CalendarEventFront::ATTR_END_DATE,
+											'class'     => 'form-control',
+											'data-role' => 'datetimepicker',
+									],
+							])->label(false) ?>
+						</div>
+
+						<div class="col-xs-6">
+							<button type="button" class="btn btn-default" data-role="add_time" data-value="1" data-type="hours">+1</button>
+							<button type="button" class="btn btn-default" data-role="add_time" data-value="2" data-type="hours">+2</button>
+							<button type="button" class="btn btn-default" data-role="add_time" data-value="3" data-type="hours">+3</button>
+						</div>
+					</div>
+				</div>
 
 				<?= $form->field($eventModel, CalendarEventFront::ATTR_TITLE, [
 					'inputOptions' => [
