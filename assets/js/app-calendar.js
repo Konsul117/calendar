@@ -186,8 +186,8 @@
 
 		calendarChangeView: function(view) {
 			methods.loadEvents(
-				view.intervalStart,
-				view.intervalEnd,
+				view.start,
+				view.end,
 				/**
 				 * @param {CalendarEvent[]} events
 				 */
