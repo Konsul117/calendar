@@ -3,7 +3,6 @@
 namespace app\commands;
 
 use app\models\User;
-use Yii;
 use yii\console\Controller;
 use yii\helpers\Console;
 

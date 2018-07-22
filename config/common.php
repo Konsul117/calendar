@@ -1,4 +1,5 @@
 <?php
+
 use yii\helpers\ArrayHelper;
 
 $config = [
@@ -23,6 +24,12 @@ $config = [
 					'class'  => 'yii\log\FileTarget',
 					'levels' => ['error', 'warning'],
 				],
+				[
+					'class'      => \app\components\FileLogTargetSimple::class,
+					'categories' => ['telegram'],
+					'levels'     => ['error', 'warning', 'info'],
+					'logFile'    => '@runtime/logs/telegram.log',
+				],
 			],
 		],
 		'db'           => [
@@ -34,7 +41,10 @@ $config = [
 		],
 	],
 	'params' => [
-		'defaultUTCOffset' => 10,
+		'defaultUTCOffset'       => 10,
+		'proxies'                => [],
+		'telegramApiKey'         => '',
+		'telegramHookLogEnabled' => false,
 	]
 ];
 
