@@ -38,10 +38,11 @@ class TelegramController extends Controller {
 			Yii::info(print_r(file_get_contents('php://input'), true), 'telegram');
 		}
 
-		$updates = $this->service->getApi()->getWebhookUpdate();
+		$updates = $this->service->getApi()->getWebhookUpdates();
 
 		if (Yii::$app->params['telegramHookLogEnabled'] === true) {
-			Yii::info('chat id: ' . $updates->getChat()->id . ', message: ' . $updates->getMessage()->text, 'telegram');
+			Yii::info(var_export($updates, true), 'telegram');
+			Yii::info('chat id: ' . $updates->getMessage()->getChat()->getId() . ', message: ' . $updates->getMessage()->text, 'telegram');
 		}
 	}
 }
