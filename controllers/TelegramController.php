@@ -42,7 +42,11 @@ class TelegramController extends Controller {
 
 		if (Yii::$app->params['telegramHookLogEnabled'] === true) {
 			Yii::info(var_export($updates, true), 'telegram');
-			Yii::info('chat id: ' . $updates->getMessage()->getChat()->getId() . ', message: ' . $updates->getMessage()->getText(), 'telegram');
+			Yii::info(var_export($updates->getMessage()->getChat()->getId(), true), 'telegram');
+
+			foreach ($updates->getMessage()->getIterator() as $item) {
+				Yii::info(var_export($item, true), 'telegram');
+			}
 		}
 	}
 }
