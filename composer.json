@@ -18,7 +18,7 @@
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
-        "irazasyed/telegram-bot-sdk": "2.2.*"
+        "irazasyed/telegram-bot-sdk": "^3.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
