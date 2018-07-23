@@ -45,19 +45,12 @@ class TelegramController extends Controller {
 		$webhookUrl = Console::stdin();
 		$this->stdout(PHP_EOL);
 
-		$webhookUrl .= '/telegram';
-
 		$result = $this->service->getApi()->setWebhook([
 			'certificate' => $certPath,
 			'url'         => $webhookUrl,
 		]);
 
-		if ($result === true) {
-			$this->stdout('Хука успешно установлена');
-		}
-		else {
-			$this->stderr('Ошибка при установке хуки');
-		}
+		$this->stdout($result->__toString());
 
 		$this->stdout(PHP_EOL);
 	}
@@ -70,14 +63,7 @@ class TelegramController extends Controller {
 	 */
 	public function actionDeleteWebhook() {
 		$result = $this->service->getApi()->deleteWebhook();
-
-		if ($result === true) {
-			$this->stdout('Хука успешно удалена');
-		}
-		else {
-			$this->stderr('Ошибка при удалении хуки');
-		}
-
+		$this->stdout($result->__toString());
 		$this->stdout(PHP_EOL);
 	}
 
@@ -96,16 +82,12 @@ class TelegramController extends Controller {
 		$message = Console::stdin();
 		$this->stdout(PHP_EOL);
 
-		$result = $this->service->getApi()->sendMessage([
+		$this->service->getApi()->sendMessage([
 			'chat_id' => $chatId,
 			'text' => $message,
 		]);
 
-		if ($result === true) {
-			$this->stdout('Сообщение успешно отправлено');
-		}
-		else {
-			$this->stderr('Ошибка при отправке сообщения');
-		}
+		$this->stdout('Сообщение успешно отправлено');
+
 	}
 }

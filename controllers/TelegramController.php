@@ -13,6 +13,8 @@ use yii\web\Controller;
  */
 class TelegramController extends Controller {
 
+	public $enableCsrfValidation = false;
+
 	/** @var TelegramService Сервис для работы с Телеграмом */
 	protected $service;
 
