@@ -22,7 +22,8 @@ $config = [
 		'urlManager'   => [
 			'enablePrettyUrl' => true,
 			'showScriptName'  => false,
-		],
+            'suffix' => '/',
+        ],
 	],
 ];
 
