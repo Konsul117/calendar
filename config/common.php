@@ -34,9 +34,9 @@ $config = [
 		],
 		'db'           => [
 			'class'    => 'yii\db\Connection',
-			'dsn'      => 'mysql:host=localhost;dbname=yii2basic',
-			'username' => 'root',
-			'password' => '',
+            'dsn'      => 'mysql:host=mysql;dbname=calendar',
+            'username' => 'web',
+            'password' => 'qwerty12345',
 			'charset'  => 'utf8',
 		],
 	],

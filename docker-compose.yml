@@ -1,0 +1,47 @@
+version: '3.2'
+
+services:
+  httpd:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./:/app:rw
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+      - memcached
+
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+      args:
+          - PHP_XDEBUG_IDE_KEY=${PHP_XDEBUG_IDE_KEY}
+          - PHP_XDEBUG_PORT=${PHP_XDEBUG_PORT}
+          - PHP_XDEBUG_REMOTE_HOST=${PHP_XDEBUG_REMOTE_HOST}
+          - PHP_XDEBUG_IDE_ENABLED=${PHP_XDEBUG_IDE_ENABLED}
+    volumes:
+      - ./:/app
+      - ./../local/.ssh:/root/.ssh
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/00-xdebug.ini
+
+  mysql:
+    image: mariadb:10.5.8-focal
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+        - 3306:3306
+    volumes:
+        - ./mysql_data:/var/lib/mysql
+    env_file:
+        - ./docker/mysql/db.env
+
+  memcached:
+    image: memcached:1.5
+    ports:
+      - 11211:11211

@@ -1,11 +1,11 @@
 <?php
 return [
 	'components' => [
-		'db'           => [
-			'dsn'      => 'mysql:host=localhost;dbname=',
-			'username' => '',
-			'password' => '',
-		],
+//		'db'           => [
+//			'dsn'      => 'mysql:host=localhost;dbname=',
+//			'username' => '',
+//			'password' => '',
+//		],
 	],
 	'params'     => [
 		'proxies'                => [
