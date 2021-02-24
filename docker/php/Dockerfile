@@ -22,7 +22,10 @@ RUN set -xe \
     postgresql-dev \
     make \
     git \
-    openssh
+    openssh \
+    nodejs \
+    npm && \
+    npm install -g bower
 
 RUN if [ $PHP_XDEBUG_IDE_ENABLED = 1 ] ; then \
 	apk add --no-cache ${PHPIZE_DEPS} \
