@@ -53,9 +53,9 @@
 	var ACTION_REMOVE_EVENTS = 'removeEvents';
 	var DATETIME_FORMAT = 'YYYY.MM.DD HH:mm:ss';
 	var DATETIME_OUT_FORMAT = 'DD.MM.YYYY HH:mm:ss';
-	var LOAD_EVENTS_URL = WEBROOT + 'load-events/';
-	var EDIT_EVENT_URL = WEBROOT + 'edit-event/';
-	var DELETE_EVENT_URL = WEBROOT + 'delete-event/';
+	var LOAD_EVENTS_URL = WEBROOT + '/load-events/';
+	var EDIT_EVENT_URL = WEBROOT + '/edit-event/';
+	var DELETE_EVENT_URL = WEBROOT + '/delete-event/';
 
 	var EVENT_CLASS_NEW = 'event-is-new';
 	var EVENT_CLASS_OVERDUE = 'event-is-overdue';
