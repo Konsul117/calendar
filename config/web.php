@@ -15,6 +15,7 @@ $config = [
 			'identityClass'   => User::class,
 			'enableAutoLogin' => true,
             'loginUrl'        => '@web/user/login/',
+            'class' => \app\components\User::class,
 		],
 		'errorHandler' => [
 			'errorAction' => 'site/error',
