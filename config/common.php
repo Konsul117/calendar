@@ -41,6 +41,7 @@ $config = [
 		],
 	],
 	'params' => [
+        'webRoot'                => '',
 		'defaultUTCOffset'       => 10,
 		'proxies'                => [],
 		'telegramApiKey'         => '',

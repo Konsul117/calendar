@@ -28,4 +28,6 @@ if (isset($config['components']['urlManager'])) {
 	);
 }
 
-(new yii\web\Application($config))->run();
+$app = new yii\web\Application($config);
+Yii::setAlias('@web', '@web' . $config['params']['webRoot']);
+$app->run();

@@ -8,6 +8,7 @@ return [
 //		],
 	],
 	'params'     => [
+        'webRoot' => '',
 		'proxies'                => [
 			[
 				'address' => 'address',
