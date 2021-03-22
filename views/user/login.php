@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',
-        'action' => Yii::getAlias('@web/user/login'),
+        'action' => Yii::getAlias('@web/user/login/'),
         'options' => ['class' => 'form-horizontal'],
         'fieldConfig' => [
             'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
