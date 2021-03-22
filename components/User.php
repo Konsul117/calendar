@@ -10,6 +10,6 @@ class User extends \yii\web\User
     {
         $result = parent::getReturnUrl($defaultUrl);
 
-        return Yii::getAlias('@web') . ltrim($result, '/');
+        return Yii::getAlias('@web') . $result;
     }
 }
